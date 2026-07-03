@@ -18,19 +18,56 @@ import {
   Shadow,
   Spacing,
 } from '../../constants/theme';
+import { authService } from '../../services/authService';
+import { useStripe } from '@stripe/stripe-react-native';
 
 export function PendingPaymentScreen() {
-  const { user, payMembership, logout } = useAuth();
+  const { user, refreshUser, logout } = useAuth();
   const [isPaying, setIsPaying] = useState(false);
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const handlePay = async () => {
     setIsPaying(true);
     try {
-      await payMembership();
-      // AuthContext updates user → RootNavigator re-renders to MemberNavigator
+      // 1. Create Payment Intent
+      const { clientSecret } = await authService.createPaymentIntent();
+
+      // 2. Initialize Payment Sheet
+      const { error: initError } = await initPaymentSheet({
+        merchantDisplayName: 'Haiwan Kita',
+        paymentIntentClientSecret: clientSecret,
+        defaultBillingDetails: {
+          name: user?.name,
+          email: user?.email,
+          phone: user?.phone || undefined,
+        },
+      });
+
+      if (initError) {
+        Alert.alert('Ralat', initError.message);
+        return;
+      }
+
+      // 3. Present Payment Sheet
+      const { error: presentError } = await presentPaymentSheet();
+
+      if (presentError) {
+        if (presentError.code === 'Canceled') {
+          // User closed the sheet
+          return;
+        }
+        Alert.alert('Ralat Pembayaran', presentError.message);
+      } else {
+        // Payment succeeded!
+        Alert.alert('Pembayaran Berjaya! 🎉', 'Terima kasih. Keahlian anda telah diaktifkan.');
+        // Refresh the user session so the app routes to Member Dashboard
+        await refreshUser();
+      }
+
     } catch (err: any) {
       if (err?.status === 409) {
         Alert.alert('Sudah Dibayar', 'Yuran keahlian anda telah pun dibayar.');
+        await refreshUser();
       } else {
         Alert.alert('Pembayaran Gagal', err?.message ?? 'Sila cuba lagi.');
       }

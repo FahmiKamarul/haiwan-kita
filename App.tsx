@@ -9,17 +9,21 @@ import { TrackingProvider } from './src/context/TrackingContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { Colors } from './src/constants/colors';
 
+import { StripeProvider } from '@stripe/stripe-react-native';
+
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <AuthProvider>
-          <TrackingProvider>
-            <StatusBar style="dark" backgroundColor={Colors.background} />
-            <RootNavigator />
-          </TrackingProvider>
-        </AuthProvider>
-      </NavigationContainer>
+      <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_mock'}>
+        <NavigationContainer>
+          <AuthProvider>
+            <TrackingProvider>
+              <StatusBar style="dark" backgroundColor={Colors.background} />
+              <RootNavigator />
+            </TrackingProvider>
+          </AuthProvider>
+        </NavigationContainer>
+      </StripeProvider>
     </SafeAreaProvider>
   );
 }

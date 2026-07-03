@@ -28,16 +28,13 @@ export const authService = {
   },
 
   /**
-   * POST /auth/pay-membership — simulates RM50 payment for MEMBER role
+   * POST /auth/create-payment-intent — fetches Stripe client secret for membership payment
    */
-  async payMembership(): Promise<{
-    paymentStatus: string;
-    amountPaid: number;
-    paidAt: string;
-    membershipExpiry: string;
-    message: string;
+  async createPaymentIntent(): Promise<{
+    clientSecret: string;
+    amount: number;
   }> {
-    const res = await api.post('/auth/pay-membership');
+    const res = await api.post('/auth/create-payment-intent');
     return res.data.data;
   },
 
