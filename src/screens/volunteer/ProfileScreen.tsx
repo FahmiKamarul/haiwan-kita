@@ -27,6 +27,17 @@ const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Pentadbir',
 };
 
+const AVAILABLE_SKILLS = [
+  'Menyelamat kucing',
+  'Menyelamat anjing',
+  'Pertolongan cemas',
+  'Pemberian makanan',
+  'Pembersihan',
+  'Transporter',
+  'Fotografi & Video',
+  'Media Sosial',
+];
+
 interface SettingRowProps {
   icon: string;
   label: string;
@@ -52,7 +63,9 @@ export function VolunteerProfileScreen() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileName, setProfileName] = useState(user?.name ?? '');
   const [profilePhone, setProfilePhone] = useState(user?.phone ?? '');
-  const [profileSkills, setProfileSkills] = useState(user?.volunteerProfile?.skills ?? '');
+  const [profileSkills, setProfileSkills] = useState<string[]>(
+    user?.volunteerProfile?.skills ? user.volunteerProfile.skills.split(',').map(s => s.trim()) : []
+  );
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Password Modal State
@@ -92,7 +105,7 @@ export function VolunteerProfileScreen() {
     if (user) {
       setProfileName(user.name ?? '');
       setProfilePhone(user.phone ?? '');
-      setProfileSkills(user.volunteerProfile?.skills ?? '');
+      setProfileSkills(user.volunteerProfile?.skills ? user.volunteerProfile.skills.split(',').map(s => s.trim()) : []);
     }
   }, [user]);
 
@@ -106,7 +119,7 @@ export function VolunteerProfileScreen() {
       await updateProfile({
         name: profileName,
         phone: profilePhone,
-        skills: profileSkills,
+        skills: profileSkills.join(', '),
       });
       setShowProfileModal(false);
       Alert.alert('Berjaya! 🎉', 'Profil anda telah berjaya dikemaskini.');
@@ -277,12 +290,29 @@ export function VolunteerProfileScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Kemahiran / Kepakaran</Text>
-              <TextInput
-                style={styles.textInput}
-                value={profileSkills}
-                onChangeText={setProfileSkills}
-                placeholder="Contoh: Menyelamat kucing, Pertolongan cemas"
-              />
+              <View style={styles.skillsContainer}>
+                {AVAILABLE_SKILLS.map(skill => {
+                  const isSelected = profileSkills.includes(skill);
+                  return (
+                    <TouchableOpacity
+                      key={skill}
+                      style={[styles.skillChip, isSelected && styles.skillChipSelected]}
+                      onPress={() => {
+                        if (isSelected) {
+                          setProfileSkills(profileSkills.filter(s => s !== skill));
+                        } else {
+                          setProfileSkills([...profileSkills, skill]);
+                        }
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.skillChipText, isSelected && styles.skillChipTextSelected]}>
+                        {skill}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
 
             <View style={styles.modalButtons}>
@@ -504,6 +534,32 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: FontSize.md,
     color: Colors.textPrimary,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  skillChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  skillChipSelected: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  skillChipText: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+  },
+  skillChipTextSelected: {
+    color: Colors.white,
+    fontWeight: FontWeight.semibold,
   },
   modalButtons: {
     flexDirection: 'row',
