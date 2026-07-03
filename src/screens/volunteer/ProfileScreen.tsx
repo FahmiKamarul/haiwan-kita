@@ -203,8 +203,9 @@ export function VolunteerProfileScreen() {
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>
-              {new Date(Date.now() - new Date(user?.volunteerProfile?.totalMissions
-                ? '2024-01-01' : Date.now()).getTime()).getFullYear() - 1970}yr
+              {user?.createdAt 
+                ? ((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1)
+                : '0.0'}yr
             </Text>
             <Text style={styles.statLabel}>Bersama SAFM</Text>
           </View>

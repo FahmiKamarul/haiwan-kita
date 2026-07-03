@@ -49,6 +49,7 @@ export interface User {
   phone?: string | null;
   avatarUrl?: string | null;
   token: string;
+  createdAt?: string;
   memberProfile?: MemberProfile | null;
   volunteerProfile?: VolunteerProfile | null;
   // Only present after MEMBER registration before payment
