@@ -108,7 +108,7 @@ export function ActivityHistoryScreen() {
           </View>
         </View>
         <View style={styles.actionBtns}>
-          {item.state === 'COMPLETED' && (
+          {(item.state === 'COMPLETED' || item.certificateStatus === 'GENERATED') && (
             <TouchableOpacity
               style={styles.reviewBtn}
               onPress={() => {
