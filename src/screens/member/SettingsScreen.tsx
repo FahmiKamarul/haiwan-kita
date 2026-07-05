@@ -18,6 +18,7 @@ import { Avatar } from '../../components/Avatar';
 import { Colors } from '../../constants/colors';
 import { BorderRadius, FontSize, FontWeight, Shadow, Spacing } from '../../constants/theme';
 import { authService } from '../../services/authService';
+import { useStripe } from '@stripe/stripe-react-native';
 
 interface SettingRowProps {
   icon: string;
@@ -39,7 +40,7 @@ function SettingRow({ icon, label, onPress, danger, rightText }: SettingRowProps
 }
 
 export function MemberSettingsScreen() {
-  const { user, logout, updateProfile, payMembership } = useAuth();
+  const { user, logout, updateProfile, payMembership, refreshUser } = useAuth();
 
   // Profile Modal State
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -130,13 +131,49 @@ export function MemberSettingsScreen() {
     }
   };
 
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
   const handlePayMembership = async () => {
     setIsPaying(true);
     try {
-      await payMembership();
-      // Succesfully paid, membership status updates in Context
+      // 1. Create Payment Intent
+      const { clientSecret } = await authService.createPaymentIntent();
+
+      // 2. Initialize Payment Sheet
+      const { error: initError } = await initPaymentSheet({
+        merchantDisplayName: 'Haiwan Kita',
+        paymentIntentClientSecret: clientSecret,
+        defaultBillingDetails: {
+          name: user?.name,
+          email: user?.email,
+          phone: user?.phone || undefined,
+        },
+      });
+
+      if (initError) {
+        Alert.alert('Ralat', initError.message);
+        return;
+      }
+
+      // 3. Present Payment Sheet
+      const { error: presentError } = await presentPaymentSheet();
+
+      if (presentError) {
+        if (presentError.code !== 'Canceled') {
+          Alert.alert('Ralat Pembayaran', presentError.message);
+        }
+      } else {
+        // Payment succeeded!
+        Alert.alert('Pembayaran Berjaya! 🎉', 'Terima kasih. Keahlian anda telah diperbaharui.');
+        await refreshUser();
+      }
     } catch (err: any) {
-      Alert.alert('Ralat Pembayaran', err?.message ?? 'Gagal memproses simulasi pembayaran.');
+      if (err?.status === 409) {
+        Alert.alert('Sudah Dibayar', 'Yuran keahlian anda masih aktif.');
+        await refreshUser();
+      } else {
+        Alert.alert('Ralat Pembayaran', err?.message ?? 'Gagal memproses pembayaran.');
+      }
     } finally {
       setIsPaying(false);
     }
@@ -470,6 +507,7 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Colors.textPrimary,
     marginTop: Spacing.md,
+    textAlign: 'center',
   },
   email: {
     fontSize: FontSize.sm,

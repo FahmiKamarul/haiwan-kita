@@ -428,6 +428,7 @@ const styles = StyleSheet.create({
     fontWeight: FontWeight.bold,
     color: Colors.textPrimary,
     marginTop: Spacing.md,
+    textAlign: 'center',
   },
   roleBadge: {
     backgroundColor: Colors.primaryLight,
