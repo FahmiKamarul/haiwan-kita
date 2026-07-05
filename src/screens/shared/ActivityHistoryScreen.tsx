@@ -11,6 +11,7 @@ import {
   RefreshControl
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import { useSejarah } from '../../hooks/useSejarah';
 import { attendanceService } from '../../services/attendanceService';
@@ -18,6 +19,7 @@ import { Colors } from '../../constants/colors';
 import { BorderRadius, FontSize, FontWeight, Shadow, Spacing } from '../../constants/theme';
 import { Mission } from '../../types';
 export function ActivityHistoryScreen() {
+  const navigation = useNavigation<any>();
   const { user } = useAuth();
   const { missions, isLoading, refresh } = useSejarah(user?.id);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -105,20 +107,33 @@ export function ActivityHistoryScreen() {
             </Text>
           </View>
         </View>
-        {canDownload && (
-          <TouchableOpacity
-            style={[styles.downloadBtn, isDownloading && styles.downloadBtnDisabled]}
-            onPress={() => handleDownload(item)}
-            disabled={isDownloading}
-            activeOpacity={0.8}
-          >
-            {isDownloading ? (
-              <ActivityIndicator size="small" color={Colors.success} />
-            ) : (
-              <Text style={styles.downloadIcon}>⬇️</Text>
-            )}
-          </TouchableOpacity>
-        )}
+        <View style={styles.actionBtns}>
+          {item.state === 'COMPLETED' && (
+            <TouchableOpacity
+              style={styles.reviewBtn}
+              onPress={() => {
+                navigation.navigate('SubmitReview', { projectId: item.id, projectTitle: item.title });
+              }}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.reviewIcon}>⭐</Text>
+            </TouchableOpacity>
+          )}
+          {canDownload && (
+            <TouchableOpacity
+              style={[styles.downloadBtn, isDownloading && styles.downloadBtnDisabled]}
+              onPress={() => handleDownload(item)}
+              disabled={isDownloading}
+              activeOpacity={0.8}
+            >
+              {isDownloading ? (
+                <ActivityIndicator size="small" color={Colors.success} />
+              ) : (
+                <Text style={styles.downloadIcon}>⬇️</Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     );
   };
@@ -284,6 +299,19 @@ const styles = StyleSheet.create({
   },
   downloadBtnDisabled: { opacity: 0.6 },
   downloadIcon: { fontSize: 18 },
+  reviewBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    backgroundColor: '#FFF8E1',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: Spacing.sm,
+    borderWidth: 1,
+    borderColor: '#FFD54F'
+  },
+  reviewIcon: { fontSize: 18 },
+  actionBtns: { flexDirection: 'row' },
   emptyState: {
     alignItems: 'center',
     paddingTop: 60,

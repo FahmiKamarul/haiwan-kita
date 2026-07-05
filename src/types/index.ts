@@ -193,6 +193,7 @@ export type VolunteerTabParamList = {
 export type VolunteerStackParamList = {
   VolunteerTabs: undefined;
   MissionDetail: { missionId: ProjectId };
+  SubmitReview: { projectId: string; projectTitle: string };
 };
 export type MemberTabParamList = {
   Dashboard: undefined;
@@ -204,6 +205,7 @@ export type MemberStackParamList = {
   MemberTabs: undefined;
   MarkAttendance: { missionId: ProjectId; missionTitle: string };
   MissionDetail: { missionId: ProjectId };
+  SubmitReview: { projectId: string; projectTitle: string };
   ProposeMission: undefined;
 };
 export type AdminTabParamList = {

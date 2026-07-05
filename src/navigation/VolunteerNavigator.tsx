@@ -13,6 +13,7 @@ import { MissionsSearchScreen } from '../screens/volunteer/MissionsSearchScreen'
 import { ActivityHistoryScreen } from '../screens/shared/ActivityHistoryScreen';
 import { VolunteerProfileScreen } from '../screens/volunteer/ProfileScreen';
 import { MissionDetailScreen } from '../screens/volunteer/MissionDetailScreen';
+import { SubmitReviewScreen } from '../screens/volunteer/SubmitReviewScreen';
 
 const Tab = createBottomTabNavigator<VolunteerTabParamList>();
 const Stack = createStackNavigator<VolunteerStackParamList>();
@@ -88,6 +89,11 @@ export function VolunteerNavigator() {
         name="MissionDetail"
         component={MissionDetailScreen}
         options={{ presentation: 'card' }}
+      />
+      <Stack.Screen
+        name="SubmitReview"
+        component={SubmitReviewScreen}
+        options={{ presentation: 'modal' }}
       />
     </Stack.Navigator>
   );

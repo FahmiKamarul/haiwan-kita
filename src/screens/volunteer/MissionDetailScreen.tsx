@@ -27,7 +27,9 @@ import {
   Spacing,
 } from '../../constants/theme';
 import { Avatar } from '../../components/Avatar';
+import { Avatar } from '../../components/Avatar';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { config } from '../../config';
 
 type Route = RouteProp<VolunteerStackParamList, 'MissionDetail'>;
 type Nav = StackNavigationProp<VolunteerStackParamList>;
@@ -73,17 +75,30 @@ export function MissionDetailScreen() {
     loadMission();
   }, [missionId]);
 
+  const [reviewsData, setReviewsData] = useState<any>(null);
+
   const loadMission = async () => {
     setIsLoading(true);
     try {
       const data = await missionService.getMissionById(missionId);
       setMission(data);
-      if (user?.role === 'MEMBER') {
+      if (user?.role === 'MEMBER' || user?.role === 'ADMIN') {
         try {
           const parts = await missionService.getParticipants(missionId);
           setParticipants(parts);
         } catch (e) {
           console.error('Failed to load participants', e);
+        }
+        try {
+          const revRes = await fetch(`${config.API_URL}/api/v1/missions/${missionId}/reviews`, {
+            headers: { Authorization: `Bearer ${user?.token}` }
+          });
+          if (revRes.ok) {
+            const revData = await revRes.json();
+            setReviewsData(revData.data);
+          }
+        } catch (e) {
+          console.error('Failed to load reviews', e);
         }
       }
     } catch (err: any) {
@@ -307,6 +322,32 @@ export function MissionDetailScreen() {
                     <Text style={styles.participantName}>{p.name}</Text>
                     {/* The API does not currently return attendanceStatus, so we omit it or default it */}
                   </View>
+                </View>
+              ))}
+            </>
+          )}
+          {/* Reviews section (Member/Admin only) */}
+          {(user?.role === 'MEMBER' || user?.role === 'ADMIN') && reviewsData && reviewsData.summary.totalReviews > 0 && (
+            <>
+              <View style={styles.divider} />
+              <Text style={styles.sectionTitle}>Maklum Balas Sukarelawan</Text>
+              
+              <View style={styles.reviewSummary}>
+                <Text style={styles.reviewSummaryScore}>{reviewsData.summary.averageRatings.overall}</Text>
+                <Text style={styles.reviewSummaryText}>Daripada {reviewsData.summary.totalReviews} Ulasan</Text>
+              </View>
+
+              {reviewsData.reviews.map((r: any) => (
+                <View key={r.id} style={styles.reviewCard}>
+                  <View style={styles.reviewHeader}>
+                    <Avatar name={r.user.name} size={32} />
+                    <View style={{ marginLeft: 10, flex: 1 }}>
+                      <Text style={styles.reviewName}>{r.user.name}</Text>
+                      <Text style={styles.reviewDate}>{new Date(r.createdAt).toLocaleDateString()}</Text>
+                    </View>
+                    <Text style={styles.reviewStar}>⭐ {r.overallRating}</Text>
+                  </View>
+                  {r.comment && <Text style={styles.reviewComment}>{r.comment}</Text>}
                 </View>
               ))}
             </>
@@ -625,5 +666,50 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+  reviewSummary: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: Spacing.md,
+  },
+  reviewSummaryScore: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#F59E0B',
+    marginRight: 8,
+  },
+  reviewSummaryText: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+  },
+  reviewCard: {
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  reviewName: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.textPrimary,
+  },
+  reviewDate: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+  },
+  reviewStar: {
+    fontSize: FontSize.sm,
+    fontWeight: 'bold',
+    color: '#F59E0B',
+  },
+  reviewComment: {
+    fontSize: FontSize.sm,
+    color: Colors.textPrimary,
+    lineHeight: 20,
   },
 });

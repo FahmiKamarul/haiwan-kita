@@ -15,6 +15,7 @@ import { MarkAttendanceScreen } from '../screens/member/MarkAttendanceScreen';
 import { ProposeMissionScreen } from '../screens/member/ProposeMissionScreen';
 import { MissionDetailScreen } from '../screens/volunteer/MissionDetailScreen';
 import { ActivityHistoryScreen } from '../screens/shared/ActivityHistoryScreen';
+import { SubmitReviewScreen } from '../screens/volunteer/SubmitReviewScreen';
 
 const Tab = createBottomTabNavigator<MemberTabParamList>();
 const Stack = createStackNavigator<MemberStackParamList>();
@@ -95,6 +96,11 @@ export function MemberNavigator() {
         name="MissionDetail"
         component={MissionDetailScreen}
         options={{ presentation: 'card' }}
+      />
+      <Stack.Screen
+        name="SubmitReview"
+        component={SubmitReviewScreen}
+        options={{ presentation: 'modal' }}
       />
       <Stack.Screen
         name="ProposeMission"
