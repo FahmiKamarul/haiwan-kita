@@ -37,20 +37,6 @@ export function AdminDashboard() {
 
   const [volModalVisible, setVolModalVisible] = useState(false);
   const [memModalVisible, setMemModalVisible] = useState(false);
-  const [reviewStats, setReviewStats] = useState<any>(null);
-
-  const fetchReviewStats = async () => {
-    try {
-      const res = await api.get(`/api/v1/admin/reviews/stats`);
-      setReviewStats(res.data.data);
-    } catch (e) {
-      console.error('Failed to fetch review stats', e);
-    }
-  };
-
-  useEffect(() => {
-    fetchReviewStats();
-  }, []);
 
   const handleLogout = () => {
     if (Platform.OS === 'web') {
@@ -147,7 +133,6 @@ export function AdminDashboard() {
               refresh();
               refreshVolunteers();
               refreshMembers();
-              fetchReviewStats();
             }}
             tintColor={Colors.primary}
             colors={[Colors.primary]}
@@ -191,24 +176,7 @@ export function AdminDashboard() {
             </View>
           </View>
 
-          {/* Review Stats */}
-          {reviewStats && reviewStats.totalReviews > 0 && (
-            <View style={{ marginBottom: Spacing.md }}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Statistik Maklum Balas</Text>
-              </View>
-              <View style={{ flexDirection: 'row', gap: Spacing.md }}>
-                <View style={[styles.statCard, { backgroundColor: '#FFF8E1' }]}>
-                  <Text style={[styles.statNum, { color: '#F59E0B' }]}>{reviewStats.platformAverage.toFixed(1)}</Text>
-                  <Text style={styles.statLabel}>PURATA KESELURUHAN</Text>
-                </View>
-                <View style={[styles.statCard, { backgroundColor: '#E3F2FD' }]}>
-                  <Text style={[styles.statNum, { color: '#1976D2' }]}>{reviewStats.totalReviews}</Text>
-                  <Text style={styles.statLabel}>JUMLAH ULASAN</Text>
-                </View>
-              </View>
-            </View>
-          )}
+
 
           {/* Live Tracking Card */}
           <TouchableOpacity style={styles.trackingCard} onPress={() => navigation.navigate('Map' as any)} activeOpacity={0.8}>

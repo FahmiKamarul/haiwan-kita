@@ -9,6 +9,7 @@ import { FontSize, FontWeight } from '../constants/theme';
 
 // Screens
 import { AdminDashboard } from '../screens/admin/AdminDashboard';
+import { AdminReportsScreen } from '../screens/admin/AdminReportsScreen';
 import { AdminMapScreen } from '../screens/admin/AdminMapScreen';
 import { AdminProjectsScreen } from '../screens/admin/AdminProjectsScreen';
 import { ReviewProjectScreen } from '../screens/admin/ReviewProjectScreen';
@@ -70,7 +71,7 @@ function AdminTabs() {
       />
       <Tab.Screen
         name="Reports"
-        component={AdminDashboard}
+        component={AdminReportsScreen}
         options={{
           tabBarLabel: 'Laporan',
           tabBarIcon: ({ focused }) => <TabIcon emoji="📈" focused={focused} />,
