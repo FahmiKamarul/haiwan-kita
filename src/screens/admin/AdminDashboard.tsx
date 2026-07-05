@@ -176,7 +176,7 @@ export function AdminDashboard() {
           </View>
 
           {/* Live Tracking Card */}
-          <View style={styles.trackingCard}>
+          <TouchableOpacity style={styles.trackingCard} onPress={() => navigation.navigate('Map' as any)} activeOpacity={0.8}>
             <View style={styles.trackingHeader}>
               <Text style={styles.trackingTitle}>Penjejakan Langsung Sukarelawan</Text>
               <View style={styles.liveBadge}>
@@ -195,7 +195,7 @@ export function AdminDashboard() {
             <Text style={styles.trackingFooter}>
               Memantau {activeMissions.length} sukarelawan aktif di lapangan.
             </Text>
-          </View>
+          </TouchableOpacity>
 
           {/* Pending Approvals */}
           <View style={styles.sectionHeader}>
