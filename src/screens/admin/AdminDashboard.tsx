@@ -23,7 +23,7 @@ import { AdminStackParamList } from '../../types';
 import { Colors } from '../../constants/colors';
 import { BorderRadius, FontSize, FontWeight, Shadow, Spacing } from '../../constants/theme';
 import { useAuth } from '../../context/AuthContext';
-import { config } from '../../config';
+import api from '../../lib/api';
 
 type Nav = StackNavigationProp<AdminStackParamList>;
 
@@ -41,13 +41,8 @@ export function AdminDashboard() {
 
   const fetchReviewStats = async () => {
     try {
-      const res = await fetch(`${config.API_URL}/api/v1/missions/admin/reviews/stats`, {
-        headers: { Authorization: `Bearer ${user?.token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setReviewStats(data.data);
-      }
+      const res = await api.get(`/api/v1/missions/admin/reviews/stats`);
+      setReviewStats(res.data.data);
     } catch (e) {
       console.error('Failed to fetch review stats', e);
     }

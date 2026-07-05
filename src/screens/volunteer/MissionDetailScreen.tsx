@@ -29,7 +29,7 @@ import {
 import { Avatar } from '../../components/Avatar';
 import { Avatar } from '../../components/Avatar';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { config } from '../../config';
+import api from '../../lib/api';
 
 type Route = RouteProp<VolunteerStackParamList, 'MissionDetail'>;
 type Nav = StackNavigationProp<VolunteerStackParamList>;
@@ -90,13 +90,8 @@ export function MissionDetailScreen() {
           console.error('Failed to load participants', e);
         }
         try {
-          const revRes = await fetch(`${config.API_URL}/api/v1/missions/${missionId}/reviews`, {
-            headers: { Authorization: `Bearer ${user?.token}` }
-          });
-          if (revRes.ok) {
-            const revData = await revRes.json();
-            setReviewsData(revData.data);
-          }
+          const revRes = await api.get(`/api/v1/missions/${missionId}/reviews`);
+          setReviewsData(revRes.data.data);
         } catch (e) {
           console.error('Failed to load reviews', e);
         }

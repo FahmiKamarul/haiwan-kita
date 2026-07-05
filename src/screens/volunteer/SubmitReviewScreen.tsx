@@ -15,7 +15,7 @@ import { VolunteerStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { Colors } from '../../constants/colors';
 import { BorderRadius, FontSize, FontWeight, Shadow, Spacing } from '../../constants/theme';
-import { config } from '../../config';
+import api from '../../lib/api';
 
 type SubmitReviewRouteProp = RouteProp<VolunteerStackParamList, 'SubmitReview'>;
 
@@ -56,22 +56,19 @@ export function SubmitReviewScreen() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${config.API_URL}/api/v1/missions/${projectId}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ratingManagement,
-          ratingSafety,
-          ratingImpact,
-          ratingFacility,
-          comment: comment.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Gagal menghantar ulasan.');
+      const payload = {
+        ratingManagement,
+        ratingSafety,
+        ratingImpact,
+        ratingFacility,
+        comment: comment.trim() || undefined,
+      };
+      
+      const res = await api.post(`/api/v1/missions/${projectId}/reviews`, payload);
+      
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error('Gagal menghantar ulasan.');
+      }
 
       Alert.alert('Berjaya', 'Maklum balas anda telah direkodkan. Terima kasih!', [
         { text: 'OK', onPress: () => navigation.goBack() }
