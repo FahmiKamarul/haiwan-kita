@@ -56,16 +56,40 @@ export function AdminReportsScreen() {
         </View>
 
         {reviewStats ? (
-          <View style={{ flexDirection: 'row', gap: Spacing.md }}>
-            <View style={[styles.statCard, { backgroundColor: '#FFF8E1' }]}>
-              <Text style={[styles.statNum, { color: '#F59E0B' }]}>{reviewStats.platformAverage.toFixed(1)}</Text>
-              <Text style={styles.statLabel}>PURATA KESELURUHAN</Text>
+          <>
+            <View style={{ flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.xl }}>
+              <View style={[styles.statCard, { backgroundColor: '#FFF8E1' }]}>
+                <Text style={[styles.statNum, { color: '#F59E0B' }]}>{reviewStats.platformAverage.toFixed(1)}</Text>
+                <Text style={styles.statLabel}>PURATA KESELURUHAN</Text>
+              </View>
+              <View style={[styles.statCard, { backgroundColor: '#E3F2FD' }]}>
+                <Text style={[styles.statNum, { color: '#1976D2' }]}>{reviewStats.totalReviews}</Text>
+                <Text style={styles.statLabel}>JUMLAH ULASAN</Text>
+              </View>
             </View>
-            <View style={[styles.statCard, { backgroundColor: '#E3F2FD' }]}>
-              <Text style={[styles.statNum, { color: '#1976D2' }]}>{reviewStats.totalReviews}</Text>
-              <Text style={styles.statLabel}>JUMLAH ULASAN</Text>
+
+            {/* Recent Comments */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Ulasan Terkini Sukarelawan</Text>
             </View>
-          </View>
+            
+            {reviewStats.recentComments && reviewStats.recentComments.length > 0 ? (
+              reviewStats.recentComments.map((review: any, index: number) => (
+                <View key={review.id || index} style={styles.commentCard}>
+                  <View style={styles.commentHeader}>
+                    <Text style={styles.commentAuthor}>{review.user?.name || 'Sukarelawan'}</Text>
+                    <Text style={styles.commentProject}>{review.project?.title || 'Projek Tidak Diketahui'}</Text>
+                  </View>
+                  <Text style={styles.commentRating}>★ {review.overallRating?.toFixed(1) || '0.0'} / 5.0</Text>
+                  <Text style={styles.commentText}>"{review.comment}"</Text>
+                </View>
+              ))
+            ) : (
+              <View style={styles.emptyCard}>
+                <Text style={styles.emptyText}>Tiada ulasan terkini.</Text>
+              </View>
+            )}
+          </>
         ) : (
           <View style={styles.emptyCard}>
             <Text style={styles.emptyText}>Sedang memuat turun data statistik...</Text>
@@ -119,4 +143,44 @@ const styles = StyleSheet.create({
     ...Shadow.sm,
   },
   emptyText: { fontSize: FontSize.sm, color: Colors.textMuted },
+  commentCard: {
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    ...Shadow.sm,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.primary,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  commentAuthor: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.bold,
+    color: Colors.textPrimary,
+  },
+  commentProject: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+    backgroundColor: Colors.background,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+  },
+  commentRating: {
+    fontSize: FontSize.sm,
+    color: '#F59E0B',
+    fontWeight: FontWeight.semibold,
+    marginBottom: Spacing.sm,
+  },
+  commentText: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    fontStyle: 'italic',
+    lineHeight: 20,
+  },
 });
