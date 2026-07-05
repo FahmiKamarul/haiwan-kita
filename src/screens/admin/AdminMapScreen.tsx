@@ -73,6 +73,16 @@ export function AdminMapScreen() {
     );
   };
 
+  const focusOnStreamer = (s: LiveLocation) => {
+    if (!mapRef.current) return;
+    mapRef.current.animateToRegion({
+      latitude: s.latitude,
+      longitude: s.longitude,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    }, 800);
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       {/* Header */}
@@ -132,7 +142,7 @@ export function AdminMapScreen() {
         <View style={styles.streamerList}>
           <Text style={styles.streamerListTitle}>Senarai Sukarelawan</Text>
           {allStreamers.map((s) => (
-            <View key={s.userId} style={styles.streamerRow}>
+            <TouchableOpacity key={s.userId} style={styles.streamerRow} onPress={() => focusOnStreamer(s)}>
               <View style={[styles.streamerDot, { backgroundColor: s.isStreaming ? Colors.success : Colors.danger }]} />
               <Text style={styles.streamerName}>
                 {s.name ?? `Pengguna ${s.userId.slice(0, 6)}`}
@@ -143,7 +153,7 @@ export function AdminMapScreen() {
                   minute: '2-digit',
                 })}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       )}
