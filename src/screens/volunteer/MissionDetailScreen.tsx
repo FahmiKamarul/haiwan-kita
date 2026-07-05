@@ -27,7 +27,6 @@ import {
   Spacing,
 } from '../../constants/theme';
 import { Avatar } from '../../components/Avatar';
-import { Avatar } from '../../components/Avatar';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import api from '../../lib/api';
 
