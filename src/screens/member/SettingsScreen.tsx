@@ -405,6 +405,18 @@ export function MemberSettingsScreen() {
                 <Text style={styles.billingTipText}>
                   🎉 Terima kasih atas sokongan tahunan anda kepada Persatuan Haiwan Malaysia! Sumbangan anda membantu membiayai usaha menyelamat dan membela kebajikan haiwan.
                 </Text>
+
+                <TouchableOpacity
+                  style={[styles.payBtn, { marginTop: Spacing.md }]}
+                  onPress={handlePayMembership}
+                  disabled={isPaying}
+                >
+                  {isPaying ? (
+                    <ActivityIndicator size="small" color={Colors.white} />
+                  ) : (
+                    <Text style={styles.payBtnText}>Perbaharui Keahlian (RM 50.00)</Text>
+                  )}
+                </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.paymentPendingContainer}>
