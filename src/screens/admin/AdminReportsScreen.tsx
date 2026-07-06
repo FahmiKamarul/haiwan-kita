@@ -81,7 +81,13 @@ export function AdminReportsScreen() {
                     <Text style={styles.commentProject}>{review.project?.title || 'Projek Tidak Diketahui'}</Text>
                   </View>
                   <Text style={styles.commentRating}>★ {review.overallRating?.toFixed(1) || '0.0'} / 5.0</Text>
-                  <Text style={styles.commentText}>"{review.comment}"</Text>
+                  {review.comment ? (
+                    <Text style={styles.commentText}>"{review.comment}"</Text>
+                  ) : (
+                    <Text style={[styles.commentText, { fontStyle: 'italic', color: Colors.textMuted }]}>
+                      (Hanya memberikan penilaian bintang)
+                    </Text>
+                  )}
                 </View>
               ))
             ) : (
