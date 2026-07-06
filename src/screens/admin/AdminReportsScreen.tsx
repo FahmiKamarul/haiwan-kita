@@ -20,7 +20,7 @@ export function AdminReportsScreen() {
 
   const fetchReviewStats = async () => {
     try {
-      const res = await api.get(`/api/v1/admin/reviews/stats`);
+      const res = await api.get(`/api/v1/missions/admin/reviews/stats`);
       setReviewStats(res.data.data);
     } catch (e) {
       console.error('Failed to fetch review stats', e);
