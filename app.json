@@ -32,7 +32,12 @@
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB9d2J8-ns-7Cp0XxChy8sluu47UHxzm70"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

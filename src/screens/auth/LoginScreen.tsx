@@ -11,6 +11,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -84,7 +85,10 @@ export function LoginScreen() {
 
         <View style={styles.card}>
           {/* Logo / Title */}
-          <Text style={styles.logoText}>Haiwan Kita</Text>
+          <View style={{ alignItems: 'center', marginBottom: 12 }}>
+            <Image source={require('../../../assets/safm-logo.png')} style={{ width: 80, height: 80, resizeMode: 'contain', marginBottom: 8 }} />
+            <Text style={[styles.logoText, { marginBottom: 0 }]}>Haiwan Kita</Text>
+          </View>
           <Text style={styles.subtitle}>
             Log masuk untuk urus misi dan profil anda.
           </Text>

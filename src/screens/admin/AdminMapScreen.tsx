@@ -43,14 +43,23 @@ export function AdminMapScreen() {
   useEffect(() => {
     if (!token) return;
 
-    // Fetch initial locations
-    getGlobalLatestLocations().then((res) => {
-      const initial: Record<string, LiveLocation> = {};
-      res.streamers.forEach((s: any) => {
-        initial[s.userId] = s;
-      });
-      setStreamers(initial);
-    }).catch(err => console.warn('[AdminMap] Failed to fetch initial locations:', err));
+    const fetchLocations = () => {
+      getGlobalLatestLocations().then((res) => {
+        setStreamers((prev) => {
+          const updated = { ...prev };
+          res.streamers.forEach((s: any) => {
+            updated[s.userId] = s;
+          });
+          return updated;
+        });
+      }).catch(err => console.warn('[AdminMap] Failed to fetch locations:', err));
+    };
+
+    // Fetch immediately
+    fetchLocations();
+
+    // Fetch every 30 seconds to stay in sync
+    const intervalId = setInterval(fetchLocations, 30000);
 
     const socket = connectSocket(token);
     joinAdminRoom();
@@ -59,7 +68,11 @@ export function AdminMapScreen() {
     socket.on('locationUpdate', (payload: LiveLocation) => {
       setStreamers((prev) => ({ ...prev, [payload.userId]: payload }));
     });
-    return () => { socket.off('locationUpdate'); };
+    
+    return () => { 
+      clearInterval(intervalId);
+      socket.off('locationUpdate'); 
+    };
   }, [token]);
 
   const allStreamers = Object.values(streamers);

@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -63,7 +64,10 @@ export function MemberDashboard() {
         {/* Top Bar */}
         <View style={styles.topBar}>
           <View>
-            <Text style={styles.appName}>Haiwan Kita</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+              <Image source={require('../../../assets/safm-logo.png')} style={{ width: 24, height: 24, marginRight: 8, resizeMode: 'contain' }} />
+              <Text style={[styles.appName, { marginBottom: 0 }]}>Haiwan Kita</Text>
+            </View>
             <Text style={styles.portal}>Portal Ahli</Text>
           </View>
           <View style={styles.topRight}>

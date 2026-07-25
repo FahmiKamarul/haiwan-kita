@@ -12,6 +12,7 @@ import {
   Platform,
   Modal,
   FlatList,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -142,7 +143,10 @@ export function AdminDashboard() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.appName}>Haiwan Kita</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+              <Image source={require('../../../assets/safm-logo.png')} style={{ width: 24, height: 24, marginRight: 8, resizeMode: 'contain' }} />
+              <Text style={[styles.appName, { marginBottom: 0 }]}>Haiwan Kita</Text>
+            </View>
             <Text style={styles.portalLabel}>Portal Pentadbir</Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
